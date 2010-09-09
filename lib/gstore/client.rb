@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'ruby-debug'
+
 require 'gstore/request'
 require 'gstore/bucket'
 require 'gstore/object'

@@ -12,14 +12,12 @@ Feature: bucket
     Then I can list the bucket
     And the list doesn't include the bucket
 
-  Scenario: change the acl of an empty bucket
+  Scenario: create a bucket with predefined acl
     Given the bucket name according the current time
-    When I create the bucket
+    When I create the bucket with public acl
     Then I can list the bucket
     And the list include the bucket
-    When I change the acl of the bucket
-    When I get the acl of the bucket
-    Then the acl of bucket is changed
+    Then I get the public acl of bucket
     When I delete the bucket
     Then I can list the bucket
     And the list doesn't include the bucket
