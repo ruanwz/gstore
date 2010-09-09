@@ -18,7 +18,7 @@ Feature: bucket
     Then I can list the bucket
     And the list include the bucket
     When I change the acl of the bucket
-    When I get the acl of the bucket
+    When I get the acl of bucket
     Then the acl of bucket is changed
     When I delete the bucket
     Then I can list the bucket
