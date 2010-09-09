@@ -1,5 +1,10 @@
-When /^the bucket name according the current time$/ do
-  @bucket_name=Time.now.hash.abs.to_s
+Given /^the bucket name according the current time$/ do
+  @bucket_name=Time.now.hash.abs.to_s + '_bucket'
+end
+
+Given /^the object name according the current time$/ do
+  @object_name=Time.now.hash.abs.to_s + '_object'
+  @object_conttent="test"
 end
 
 When /^I create the bucket$/ do
@@ -34,6 +39,10 @@ end
 When /^I delete the bucket$/ do
   @client.delete_bucket @bucket_name
 end
+When /^I delete the object$/ do
+  @client.delete_object @bucket_name, @object_name
+end
+
 
 Then /^the list doesn't include the bucket$/ do
   @bucket_name_list.should_not include @bucket_name
@@ -50,4 +59,11 @@ When /^I get the public acl of bucket$/ do
 end
 
 
+When /^I put the object$/ do
+  @client.put_object @bucket_name, @object_name, :data => @object_conttent
+end
+
+Then /^I can get the object$/ do
+  @client.get_object(@bucket_name, @object_name).should == @object_conttent
+end
 
