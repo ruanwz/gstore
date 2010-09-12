@@ -80,3 +80,9 @@ client.create_object('my_public_bucket', 'my_public_object', :headers => {:x_goo
 </code></pre>
 
 * <code>x_goog_acl</code> is converted to <code>x-goog-acl</code> so you can use the ruby symbol without quotes. <code>:"x-goog-acl"</code> and <code>"x-goog-acl"</code> also work
+
+h2. TODO List by ruanwz
+
+1 Write features to verify the basic usage of google storage api (done).
+2 Now the response is returned in xml format. Need to wrap into objects
+3 Write a command line tool for it
