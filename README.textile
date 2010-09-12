@@ -86,3 +86,5 @@ h2. TODO List by ruanwz
 1 Write features to verify the basic usage of google storage api (done).
 2 Now the response is returned in xml format. Need to wrap into objects
 3 Write a command line tool for it
+
+The features result can be seen at http://gist.github.com/576288
