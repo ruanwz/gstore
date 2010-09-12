@@ -18,4 +18,21 @@ module GStore
     end
     
   end
+
+  class GSBucket
+    def self.getBuckets
+    end
+    def get(options={})
+    end
+    def put(acl_policy=nil)
+    end
+    def delete
+    end
+  end
+
+  class GSBucketList
+    #fetch all the Buckets belongs to this user
+    def get
+    end
+  end
 end

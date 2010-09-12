@@ -22,4 +22,16 @@ module GStore
       head(bucket, "/#{filename}", options)
     end
   end
+
+  class GSObject
+    def value
+    end
+    def put(acl_polic=nil)
+    end
+    def metadata
+    end
+    def delete
+    end
+  end
+    
 end
