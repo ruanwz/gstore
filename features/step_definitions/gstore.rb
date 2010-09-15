@@ -22,14 +22,14 @@ end
 
 Then /^I can list the bucket$/ do
   response= @client.list_buckets
-  doc = XmlSimple.xml_in(response)
-  #p doc
-#{"Buckets"=>[{"Bucket"=>[{"CreationDate"=>["2010-09-08T14:55:04.806Z"], "Name"=>["862997178"]}, {"CreationDate"=>["2010-09-08T14:49:32.891Z"], "Name"=>["863030468"]}, {"CreationDate"=>["2010-09-08T14:52:47.200Z"], "Name"=>["863332240"]}, {"CreationDate"=>["2010-07-11T00:51:14.917Z"], "Name"=>["rmu"]}, {"CreationDate"=>["2010-07-10T19:20:21.412Z"], "Name"=>["ruanwz"]}, {"CreationDate"=>["2010-07-11T00:54:55.670Z"], "Name"=>["ruanwz_share"]}]}], "Owner"=>[{"DisplayName"=>["David Ruan"], "ID"=>["00b4903a97160e20eb0c026e252d8f0830b8fa82d7b34a9b0d41f386096aac0b"]}], "xmlns"=>"http://doc.s3.amazonaws.com/2006-03-01"}
-
+  nokogiri_doc = Nokogiri::XML(response)
   @bucket_name_list=[]
-  doc["Buckets"][0]["Bucket"].each do |b|
-    @bucket_name_list << b["Name"][0]
+  nokogiri_doc.xpath("//xmlns:Name").each do |node|
+    @bucket_name_list << node.text
   end
+
+  #p doc
+  #"<?xml version='1.0' encoding='UTF-8'?><ListAllMyBucketsResult xmlns='http://doc.s3.amazonaws.com/2006-03-01'><Owner><ID>00b4903a97160e20eb0c026e252d8f0830b8fa82d7b34a9b0d41f386096aac0b</ID><DisplayName>David Ruan</DisplayName></Owner><Buckets><Bucket><Name>862187732_bucket</Name><CreationDate>2010-09-15T06:36:36.428Z</CreationDate></Bucket><Bucket><Name>862650248_bucket</Name><CreationDate>2010-09-15T06:34:43.869Z</CreationDate></Bucket><Bucket><Name>862872469_bucket</Name><CreationDate>2010-09-15T06:34:48.713Z</CreationDate></Bucket><Bucket><Name>rmu</Name><CreationDate>2010-07-11T00:51:14.917Z</CreationDate></Bucket><Bucket><Name>ruanwz</Name><CreationDate>2010-07-10T19:20:21.412Z</CreationDate></Bucket><Bucket><Name>ruanwz_share</Name><CreationDate>2010-07-11T00:54:55.670Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>"
 end
 
 Then /^the list include the bucket$/ do
@@ -49,13 +49,11 @@ Then /^the list doesn't include the bucket$/ do
 end
 
 When /^I get the public acl of bucket$/ do
-    response = @client.get_bucket @bucket_name, :params=> {:acl => true}
-    doc = XmlSimple.xml_in(response)
-    permission_list = []
-    doc["Entries"][0]["Entry"].each do |d|
-      permission_list << [d['Permission'][0], d['Scope'][0]]
-    end
-    permission_list.should include ["READ",{"type"=>"AllUsers"}]
+#<?xml version='1.0' encoding='UTF-8'?><AccessControlList><Owner><ID>00b4903a97160e20eb0c026e252d8f0830b8fa82d7b34a9b0d41f386096aac0b</ID><Name>David Ruan</Name></Owner><Entries><Entry><Scope type='UserById'><ID>00b4903a97160e20eb0c026e252d8f0830b8fa82d7b34a9b0d41f386096aac0b</ID><Name>David Ruan</Name></Scope><Permission>FULL_CONTROL</Permission></Entry><Entry><Scope type='AllUsers'/><Permission>READ</Permission></Entry></Entries></AccessControlList>
+  response = @client.get_bucket @bucket_name, :params=> {:acl => true}
+  doc = Nokogiri::XML(response)
+  doc.xpath("//Entry//Scope")[1]["type"].should == "AllUsers"
+  doc.xpath("//Entry//Permission")[1].text.should == "READ" 
 end
 
 

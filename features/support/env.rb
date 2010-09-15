@@ -1,6 +1,6 @@
 $: << File.join(File.dirname(__FILE__), "/../../lib" )
 require 'rubygems'
-require 'xmlsimple'
+require 'nokogiri'
 require 'gstore'
 
 config = File.exists?("#{ENV['HOME']}/.gstore") ? YAML::load(open("#{ENV['HOME']}/.gstore")) : Hash.new
@@ -17,3 +17,10 @@ end
 $google_storage_api_access_key=config['access_key']
 $google_storage_api_secret_key=config['secret_key']
 
+if __FILE__ == $0
+   @bucket_name=Time.now.hash.abs.to_s + '_bucket'
+   @client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
+   @client.instance_variable_set "@debug", true
+   @client.create_bucket @bucket_name, :headers => {'x-goog-acl' => 'public-read'}
+   response = @client.get_bucket @bucket_name, :params=> {:acl => true}
+end
