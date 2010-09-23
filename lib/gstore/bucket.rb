@@ -31,7 +31,7 @@ module GStore
       GSBucketList.new.get
     end
 
-    def get(options={})
+    def get_acl(options={})
       @acl_list = []
       response = GStore.client.get_bucket(name,options)
       doc = Nokogiri::XML(response)
@@ -42,6 +42,13 @@ module GStore
         @acl_list << acl
       end
       @acl_list
+    end
+
+    def get_objects(options={})
+      @objects=[]
+      response = GStore.client.get_bucket(name,options)
+      puts response
+
     end
 
     def put(acl_policy=nil)

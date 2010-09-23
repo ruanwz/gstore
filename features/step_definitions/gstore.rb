@@ -58,7 +58,10 @@ When /^I delete the bucket$/ do
 end
 
 When /^I delete the object$/ do
-  @client.delete_object @bucket_name, @object_name
+  unless GStore.client
+    @client.delete_object @bucket_name, @object_name
+  else
+  end
 end
 
 
@@ -75,13 +78,16 @@ When /^I get the public acl of bucket$/ do
     doc.xpath("//Entry//Permission")[1].text.should == "READ" 
   else
     acl={:acl_type => "AllUsers", :acl_permission=>"READ"}
-    GStore::GSBucket.new(@bucket_name).get(:params=> {:acl => true}).should include acl
+    GStore::GSBucket.new(@bucket_name).get_acl(:params=> {:acl => true}).should include acl
   end
 end
 
 
 When /^I put the object$/ do
-  @client.put_object @bucket_name, @object_name, :data => @object_conttent
+  unless GStore.client
+    @client.put_object @bucket_name, @object_name, :data => @object_conttent
+  else
+  end
 end
 
 Then /^I can get the object$/ do

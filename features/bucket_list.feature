@@ -28,4 +28,17 @@ Feature: bucket list
     Then I can list the bucket
     And the list doesn't include the bucket
 
+  Scenario: list the objects in a bucket
+    Given the access info
+    And the bucket name according the current time
+    And the object name according the current time
+    When I create the bucket
+    And I put the object
+    Then I can list the bucket
+    Then the list include the bucket
+    When I delete the object
+    When I delete the bucket
+    Then I can list the bucket
+    And the list doesn't include the bucket
+
 
