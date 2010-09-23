@@ -45,6 +45,7 @@ module GStore
     end
 
     def delete
+        GStore.client.delete_bucket name
     end
 
     def ==(bucket)

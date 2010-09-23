@@ -49,8 +49,13 @@ Then /^the list include the bucket$/ do
 end
 
 When /^I delete the bucket$/ do
-  @client.delete_bucket @bucket_name
+  if defined? @client
+    @client.delete_bucket @bucket_name
+  else
+    GStore::GSBucket.new(@bucket_name).delete
+  end
 end
+
 When /^I delete the object$/ do
   @client.delete_object @bucket_name, @object_name
 end

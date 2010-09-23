@@ -13,4 +13,8 @@ Feature: bucket list
     When I create the bucket
     Then I can list the bucket
     Then the list include the bucket
+    When I delete the bucket
+    Then I can list the bucket
+    And the list doesn't include the bucket
+
 
