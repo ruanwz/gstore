@@ -8,7 +8,7 @@ Given /^the object name according the current time$/ do
 end
 
 When /^I create the bucket$/ do
-  if defined? @client
+  unless GStore.client
     @client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
     @client.instance_variable_set "@debug", true
     @client.create_bucket @bucket_name
@@ -19,18 +19,19 @@ When /^I create the bucket$/ do
 end
 
 When /^I create the bucket with public acl$/ do
-  if defined? @client
+  unless GStore.client
     @client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
     @client.instance_variable_set "@debug", true
     @client.create_bucket @bucket_name, :headers => {'x-goog-acl' => 'public-read'}
   else
+    GStore::GSBucket.new(@bucket_name).put('public-read')
   end
 end
 
 
 Then /^I can list the bucket$/ do
   @bucket_name_list=[]
-  if defined? @client
+  unless GStore.client
     response= @client.list_buckets
     nokogiri_doc = Nokogiri::XML(response)
     nokogiri_doc.xpath("//xmlns:Name").each do |node|
@@ -49,7 +50,7 @@ Then /^the list include the bucket$/ do
 end
 
 When /^I delete the bucket$/ do
-  if defined? @client
+  unless GStore.client
     @client.delete_bucket @bucket_name
   else
     GStore::GSBucket.new(@bucket_name).delete
@@ -67,10 +68,15 @@ end
 
 When /^I get the public acl of bucket$/ do
 #<?xml version='1.0' encoding='UTF-8'?><AccessControlList><Owner><ID>00b4903a97160e20eb0c026e252d8f0830b8fa82d7b34a9b0d41f386096aac0b</ID><Name>David Ruan</Name></Owner><Entries><Entry><Scope type='UserById'><ID>00b4903a97160e20eb0c026e252d8f0830b8fa82d7b34a9b0d41f386096aac0b</ID><Name>David Ruan</Name></Scope><Permission>FULL_CONTROL</Permission></Entry><Entry><Scope type='AllUsers'/><Permission>READ</Permission></Entry></Entries></AccessControlList>
-  response = @client.get_bucket @bucket_name, :params=> {:acl => true}
-  doc = Nokogiri::XML(response)
-  doc.xpath("//Entry//Scope")[1]["type"].should == "AllUsers"
-  doc.xpath("//Entry//Permission")[1].text.should == "READ" 
+  unless GStore.client
+    response = @client.get_bucket @bucket_name, :params=> {:acl => true}
+    doc = Nokogiri::XML(response)
+    doc.xpath("//Entry//Scope")[1]["type"].should == "AllUsers"
+    doc.xpath("//Entry//Permission")[1].text.should == "READ" 
+  else
+    acl={:acl_type => "AllUsers", :acl_permission=>"READ"}
+    GStore::GSBucket.new(@bucket_name).get(:params=> {:acl => true}).should include acl
+  end
 end
 
 

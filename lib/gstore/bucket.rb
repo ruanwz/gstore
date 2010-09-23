@@ -21,7 +21,7 @@ module GStore
 
   class GSBucket
 
-    attr_accessor :name
+    attr_accessor :name, :acl_list
 
     def initialize(name)
       @name=name
@@ -32,12 +32,21 @@ module GStore
     end
 
     def get(options={})
-
+      @acl_list = []
+      response = GStore.client.get_bucket(name,options)
+      doc = Nokogiri::XML(response)
+      doc.xpath("//Entry").each do |entry|
+        acl = {}
+        acl[:acl_type] = entry.xpath("Scope")[0]["type"]
+        acl[:acl_permission] = entry.xpath("Permission")[0].text
+        @acl_list << acl
+      end
+      @acl_list
     end
 
     def put(acl_policy=nil)
       if acl_policy
-        GStore.client.create_bucket @name , :headers => {'x-google-acl'=> acl_policy}
+        GStore.client.create_bucket @name , :headers => {'x-goog-acl'=> acl_policy}
       else
         GStore.client.create_bucket @name
       end
