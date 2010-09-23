@@ -7,6 +7,10 @@ require 'gstore/bucket'
 require 'gstore/object'
 
 module GStore
+  class << self
+    attr_accessor :client
+  end
+
   class Client
     
     def initialize(options = {})

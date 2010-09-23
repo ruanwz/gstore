@@ -20,7 +20,15 @@ module GStore
   end
 
   class GSBucket
+
+    attr_accessor :name
+
+    def initialize(name)
+      @name=name
+    end
+
     def self.getBuckets
+      GSBucketList.new.get
     end
 
     def get(options={})
@@ -31,21 +39,24 @@ module GStore
 
     def delete
     end
+
+    def ==(bucket)
+      return @name == bucket.name
+    end
   end
 
   class GSBucketList
 
-    def initialize(options={})
-      @client=Client.new(options)
-    end
-
     #fetch all the Buckets belongs to this user
     def get(options={})
       buckets = []
-      xml_doc = @client.list_buckets(options)
-      doc = Nokogiri::XML(xml_doc)
+      response = GStore.client.list_buckets(options)
+      doc = Nokogiri::XML(response)
+      doc.xpath("//xmlns:Name").each do |node|
+        buckets << GSBucket.new(node.text)
+      end
+      buckets
     end
-
-
   end
+
 end

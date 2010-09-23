@@ -67,9 +67,17 @@ end
 
 
 Given /^the access info$/ do
-  @bucket_list=GStore::GSBucketList.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
+  GStore.client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
 end
 
 Then /^I can list the bucket list$/ do
-  puts @bucket_list.get
+  @bucket_list=GStore::GSBucketList.new 
+  bucket_list = @bucket_list.get
+  bucket_list.each do |b|
+    b.class.should == GStore::GSBucket
+  end
+
+  GStore::GSBucket.getBuckets.size.should == bucket_list.size
+  GStore::GSBucket.getBuckets.should == bucket_list
+
 end
