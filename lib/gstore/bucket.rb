@@ -22,17 +22,30 @@ module GStore
   class GSBucket
     def self.getBuckets
     end
+
     def get(options={})
     end
+
     def put(acl_policy=nil)
     end
+
     def delete
     end
   end
 
   class GSBucketList
-    #fetch all the Buckets belongs to this user
-    def get
+
+    def initialize(options={})
+      @client=Client.new(options)
     end
+
+    #fetch all the Buckets belongs to this user
+    def get(options={})
+      buckets = []
+      xml_doc = @client.list_buckets(options)
+      doc = Nokogiri::XML(xml_doc)
+    end
+
+
   end
 end

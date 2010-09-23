@@ -1,5 +1,5 @@
 Feature: object
-  As a google storeage api user
+  As a google storage api user
   I want to create objects in a bucket
   So that I can perform other operation on the objects
 

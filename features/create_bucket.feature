@@ -1,5 +1,5 @@
 Feature: bucket
-  As a google storeage api user
+  As a google storage api user
   I want to create a bucket
   So that I can perform other operation  on the bucket
 

@@ -67,3 +67,11 @@ Then /^I can get the object$/ do
   @client.get_object(@bucket_name, @object_name).should == @object_conttent
 end
 
+
+Given /^the access info$/ do
+  @bucket_list=GStore::GSBucketList.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
+end
+
+Then /^I can list the bucket list$/ do
+  puts @bucket_list.get
+end
