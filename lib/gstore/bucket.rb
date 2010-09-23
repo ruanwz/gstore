@@ -32,9 +32,16 @@ module GStore
     end
 
     def get(options={})
+
     end
 
     def put(acl_policy=nil)
+      if acl_policy
+        GStore.client.create_bucket @name , :headers => {'x-google-acl'=> acl_policy}
+      else
+        GStore.client.create_bucket @name
+      end
+
     end
 
     def delete
@@ -52,9 +59,11 @@ module GStore
       buckets = []
       response = GStore.client.list_buckets(options)
       doc = Nokogiri::XML(response)
+
       doc.xpath("//xmlns:Name").each do |node|
         buckets << GSBucket.new(node.text)
       end
+
       buckets
     end
   end

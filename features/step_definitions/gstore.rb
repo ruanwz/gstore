@@ -8,24 +8,36 @@ Given /^the object name according the current time$/ do
 end
 
 When /^I create the bucket$/ do
-  @client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
-  @client.instance_variable_set "@debug", true
-  @client.create_bucket @bucket_name
+  if defined? @client
+    @client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
+    @client.instance_variable_set "@debug", true
+    @client.create_bucket @bucket_name
+  else
+    GStore::GSBucket.new(@bucket_name).put
+  end
+
 end
 
 When /^I create the bucket with public acl$/ do
-  @client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
-  @client.instance_variable_set "@debug", true
-  @client.create_bucket @bucket_name, :headers => {'x-goog-acl' => 'public-read'}
+  if defined? @client
+    @client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
+    @client.instance_variable_set "@debug", true
+    @client.create_bucket @bucket_name, :headers => {'x-goog-acl' => 'public-read'}
+  else
+  end
 end
 
 
 Then /^I can list the bucket$/ do
-  response= @client.list_buckets
-  nokogiri_doc = Nokogiri::XML(response)
   @bucket_name_list=[]
-  nokogiri_doc.xpath("//xmlns:Name").each do |node|
-    @bucket_name_list << node.text
+  if defined? @client
+    response= @client.list_buckets
+    nokogiri_doc = Nokogiri::XML(response)
+    nokogiri_doc.xpath("//xmlns:Name").each do |node|
+      @bucket_name_list << node.text
+    end
+  else
+    @bucket_name_list = GStore::GSBucket.getBuckets.map {|bucket| bucket.name}
   end
 
   #p doc
@@ -68,6 +80,7 @@ end
 
 Given /^the access info$/ do
   GStore.client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
+    GStore.client.instance_variable_set "@debug", true
 end
 
 Then /^I can list the bucket list$/ do
