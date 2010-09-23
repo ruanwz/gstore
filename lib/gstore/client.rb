@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'nokogiri'
 require 'ruby-debug'
 
 require 'gstore/request'
