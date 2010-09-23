@@ -35,7 +35,9 @@ Feature: bucket list
     When I create the bucket
     And I put the object
     Then I can list the bucket
-    Then the list include the bucket
+    And the list include the bucket
+    Then I can list the objects
+    And the list include the object
     When I delete the object
     When I delete the bucket
     Then I can list the bucket

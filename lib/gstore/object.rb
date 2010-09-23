@@ -24,13 +24,33 @@ module GStore
   end
 
   class GSObject
+
+    attr_reader :bucket
+    attr_accessor :name
+    attr_writer :metadata, :value
+    
+    def initialize(bucket, name, value=nil, metadata=nil)
+      @bucket, @name, @value, @metadata = bucket, name, value, metadata
+    end
+
     def value
+      GStore.client.get_object(bucket.name,@name)
     end
+
     def put(acl_polic=nil)
+      options = {:data => @value}
+      GStore.client.put_object(@bucket.name,@name,options)
     end
+
     def metadata
     end
-    def delete
+
+    def delete(options={})
+      GStore.client.delete_object(@bucket.name,@name,options)
+    end
+
+    def ==(object)
+      return (bucket.name == object.bucket.name) && (name == object.name)
     end
   end
     

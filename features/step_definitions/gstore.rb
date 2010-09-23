@@ -4,7 +4,7 @@ end
 
 Given /^the object name according the current time$/ do
   @object_name=Time.now.hash.abs.to_s + '_object'
-  @object_conttent="test"
+  @object_content="test"
 end
 
 When /^I create the bucket$/ do
@@ -61,6 +61,10 @@ When /^I delete the object$/ do
   unless GStore.client
     @client.delete_object @bucket_name, @object_name
   else
+    bucket=GStore::GSBucket.new(@bucket_name)
+    object=GStore::GSObject.new(bucket,@object_name)
+    object.delete
+
   end
 end
 
@@ -85,13 +89,25 @@ end
 
 When /^I put the object$/ do
   unless GStore.client
-    @client.put_object @bucket_name, @object_name, :data => @object_conttent
+    @client.put_object @bucket_name, @object_name, :data => @object_content
   else
+    bucket=GStore::GSBucket.new(@bucket_name)
+    object=GStore::GSObject.new(bucket,@object_name)
+    object.value=@object_content
+    object.put
   end
 end
 
 Then /^I can get the object$/ do
-  @client.get_object(@bucket_name, @object_name).should == @object_conttent
+  unless GStore.client
+    @client.get_object(@bucket_name, @object_name).should == @object_content
+  else
+    bucket=GStore::GSBucket.new(@bucket_name)
+    object=GStore::GSObject.new(bucket,@object_name)
+    bucket.get_objects.should include object
+
+    object.value.should == @object_content
+  end
 end
 
 
@@ -110,4 +126,15 @@ Then /^I can list the bucket list$/ do
   GStore::GSBucket.getBuckets.size.should == bucket_list.size
   GStore::GSBucket.getBuckets.should == bucket_list
 
+end
+
+Then /^I can list the objects$/ do
+  bucket=GStore::GSBucket.new(@bucket_name)
+  @objects=bucket.get_objects
+end
+
+Then /^the list include the object$/ do
+  bucket=GStore::GSBucket.new(@bucket_name)
+  object=GStore::GSObject.new(bucket,@object_name)
+  @objects.should include object
 end
