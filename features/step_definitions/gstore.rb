@@ -10,7 +10,7 @@ end
 When /^I create the bucket$/ do
   unless GStore.client
     @client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
-    @client.instance_variable_set "@debug", true
+    #@client.instance_variable_set "@debug", true
     @client.create_bucket @bucket_name
   else
     GStore::GSBucket.new(@bucket_name).put
@@ -21,7 +21,7 @@ end
 When /^I create the bucket with public acl$/ do
   unless GStore.client
     @client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
-    @client.instance_variable_set "@debug", true
+    #@client.instance_variable_set "@debug", true
     @client.create_bucket @bucket_name, :headers => {'x-goog-acl' => 'public-read'}
   else
     GStore::GSBucket.new(@bucket_name).put('public-read')
@@ -113,7 +113,7 @@ end
 
 Given /^the access info$/ do
   GStore.client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
-    GStore.client.instance_variable_set "@debug", true
+    #GStore.client.instance_variable_set "@debug", true
 end
 
 Then /^I can list the bucket list$/ do

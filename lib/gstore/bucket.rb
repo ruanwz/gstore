@@ -47,7 +47,6 @@ module GStore
     def get_objects(options={})
       @objects=[]
       response = GStore.client.get_bucket(name,options)
-      puts response
       doc=Nokogiri::XML(response)
       doc.xpath("//xmlns:Key").each do |k|
         @objects << GSObject.new(self,k.text)
