@@ -7,8 +7,6 @@ require 'eventmachine'
 require 'nokogiri'
 require 'gstore'
 require 'env'
-
-require 'em-http'
 require 'pp'
 $stdout.sync = true
 
