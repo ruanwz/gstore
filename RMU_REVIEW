@@ -1,0 +1,9 @@
+Instructions
+
+1 Put the access key and access secret in ~/.gstore
+2 run bin/gstore_cli
+  
+Summary for the accomplishment in September
+1 Features to verify the basic usage of google storage api(located in features/). 
+2 Wrap the library into objects GSBucketList, GSBucket, and GSObject(modified files: bucket.rb, object.rb)
+3 Write a command line tool using event machine(bin/gstore_cli).
