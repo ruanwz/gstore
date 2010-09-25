@@ -1,0 +1,116 @@
+#!/usr/bin/env ruby
+
+$: << File.join(File.dirname(__FILE__), "/../lib" )
+$: << File.join(File.dirname(__FILE__), "/../features/support" )
+require 'rubygems'
+require 'eventmachine'
+require 'nokogiri'
+require 'gstore'
+require 'env'
+
+require 'em-http'
+require 'pp'
+$stdout.sync = true
+
+class KeyboardHandler < EM::Connection
+  include EM::Protocols::LineText2
+  
+  def post_init
+    GStore.client=GStore::Client.new :access_key => $google_storage_api_access_key, :secret_key => $google_storage_api_secret_key
+ 
+    print "> "
+  end
+  
+  def receive_line(line)
+    line.chomp!
+    line.gsub!(/^\s+/,"")
+    
+    case(line)
+    when /^buckets$/ then
+
+      @bucket_list = GStore::GSBucket.getBuckets
+
+      @bucket_list.each do |b|
+        puts b.name
+      end
+
+      print "> "
+
+    when /^objects (.*)$/ then
+      bucket_name = $1.chomp
+      @bucket=GStore::GSBucket.new(bucket_name)
+
+      @objects=@bucket.get_objects
+      @objects.each do |o|
+        puts o.name
+      end
+
+      print "> "
+ 
+    when /^object (.*)$/ then
+      object_name = $1.chomp
+      object=@objects.find {|o| o.name == object_name }
+
+      file_paths = object_name.split("/")
+
+      if file_paths.size > 1
+        dir=file_paths[0..-2].join("/")
+        FileUtils.mkdir_p dir
+      end
+
+      f = File.new("./#{object.name}", "w")
+      f.write object.value
+
+      print "> "
+
+    when /^create object (.*)$/ then
+      object_name = $1.chomp
+
+      data=File.read(object_name)
+      object=GStore::GSObject.new(@bucket,object_name)
+      object.value=data
+      object.put
+
+      print "> "
+
+    when /^create bucket (.*)$/ then
+      bucket_name = $1.chomp
+      @bucket=GStore::GSBucket.new(bucket_name).put
+      print "> "
+
+    when /^delete bucket (.*)$/ then
+      bucket_name = $1.chomp
+      GStore::GSBucket.new(bucket_name).delete
+
+      print "> "
+
+    when /^delete object (.*)$/ then
+      object_name = $1.chomp
+      object=GStore::GSObject.new(@bucket,object_name)
+      object.delete
+
+      print "> "
+
+    when /^exit$/ then
+      EM.stop
+
+    when /^help$/ then
+      puts "buckets                   – gets all buckets"
+      puts "objects bucket_name       – gets all objects in the bucket"
+      puts "object object_name        – download the object"
+      puts "create object object_name – create the object"
+      puts "create bucket bucket_name – create the bucket"
+      puts "delete bucket bucket_name – delete the bucket"
+      puts "delete object object_name – delete the object"
+
+      puts "exit                      - exits the app"
+      puts "help                      - this help"
+      print "> "
+    end
+  end
+end
+
+EM::run {
+  EM.open_keyboard(KeyboardHandler)
+}
+puts "Finished"

@@ -2,14 +2,15 @@
 
 Gem::Specification.new do |s|
   s.name = %q{gstore}
-  s.version = "0.2.1"
+  s.version = "0.3.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Richard Taylor"]
-  s.date = %q{2010-07-19}
+  s.authors = ["Richard Taylor", "David Ruan"]
+  s.date = %q{2010-09-26}
   s.description = %q{gstore is a Ruby client library for the Google Storage API.}
   s.email = %q{moomerman@gmail.com}
-  s.files = ["LICENSE", "README.textile","lib/gstore.rb"] + Dir.glob('lib/gstore/*.rb')
+  s.files = ["LICENSE", "README.textile","lib/gstore.rb", "bin/gstore_cli", "features/support/env.rb", "features/step_definitions/gstore.rb"] + Dir.glob('lib/gstore/*.rb') + Dir.glob('features/*.feature')
+
   s.has_rdoc = false
   s.homepage = %q{http://github.com/moomerman/gstore}
   s.rdoc_options = ["--inline-source", "--charset=UTF-8"]
