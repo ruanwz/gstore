@@ -6,6 +6,7 @@ require 'rubygems'
 require 'eventmachine'
 require 'nokogiri'
 require 'gstore'
+require 'fileutils'
 require 'env'
 require 'pp'
 $stdout.sync = true

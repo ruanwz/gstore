@@ -7,6 +7,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Richard Taylor", "David Ruan"]
   s.date = %q{2010-09-26}
+  s.default_executable = %q{gstore_cli}
+  s.executables = ["gstore_cli"]
   s.description = %q{gstore is a Ruby client library for the Google Storage API.}
   s.email = %q{moomerman@gmail.com}
   s.files = ["LICENSE", "README.textile","lib/gstore.rb", "bin/gstore_cli", "features/support/env.rb", "features/step_definitions/gstore.rb"] + Dir.glob('lib/gstore/*.rb') + Dir.glob('features/*.feature')
